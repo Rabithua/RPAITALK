@@ -1,49 +1,111 @@
 // index.ts
 // 获取应用实例
 const app = getApp<IAppOption>()
+const { getAnswer } = require('../../utils/request')
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    canIUseGetUserProfile: false,
-    canIUseOpenData: wx.canIUse('open-data.type.userAvatarUrl') && wx.canIUse('open-data.type.userNickName') // 如需尝试获取用户信息可改为false
+    talks: [] as any,
+    issue: '',
+    btnDisable: false,
+    chatSroll:''
   },
-  // 事件处理函数
-  bindViewTap() {
-    wx.navigateTo({
-      url: '../logs/logs',
-    })
-  },
+
   onLoad() {
     // @ts-ignore
-    if (wx.getUserProfile) {
-      this.setData({
-        canIUseGetUserProfile: true
-      })
-    }
-  },
-  getUserProfile() {
-    // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-    wx.getUserProfile({
-      desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-      success: (res) => {
-        console.log(res)
+    try {
+      var talks = wx.getStorageSync('talks')
+      if (talks) {
+        // Do something with return value
         this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
+          talks,
+          chatSroll: 'chat' + (talks.length - 1)
         })
       }
+    } catch (e) {
+      // Do something when catch error
+    }
+  },
+  input(e: any) {
+    // console.log(e.detail.value)
+    this.setData({
+      issue: e.detail.value
     })
   },
-  getUserInfo(e: any) {
-    // 不推荐使用getUserInfo获取用户信息，预计自2021年4月13日起，getUserInfo将不再弹出弹窗，并直接返回匿名的用户个人信息
-    console.log(e)
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
-    })
+
+  submit() {
+    if (this.data.issue && this.data.issue !== '/clear') {
+      let talks_temp = this.data.talks
+      let issue = this.data.issue
+      talks_temp.push({
+        who: 'user',
+        content: this.data.issue
+      })
+      this.setData({
+        btnDisable: true,
+        issue: '',
+        talks: talks_temp,
+        chatSroll: 'chat' + (talks_temp.length - 1),
+      })
+      wx.setStorage({
+        key: 'talks',
+        data: talks_temp
+      })
+      wx.vibrateShort({
+        type: 'light'
+      })
+      wx.setNavigationBarTitle({
+        title: '思考中...'
+      })
+      getAnswer(issue, app.globalData.url)
+        .then((res: any) => {
+          console.log(res.result)
+          let talks_temp = this.data.talks
+          talks_temp.push({
+            who: 'openai',
+            content: res.result.trim('\n\n')
+          })
+          wx.setNavigationBarTitle({
+            title: 'RPAITALK'
+          })
+          this.setData({
+            talks: talks_temp,
+            chatSroll: 'chat' + (talks_temp.length - 1),
+            btnDisable: false
+          })
+          wx.vibrateShort({
+            type: 'light'
+          })
+          wx.setStorage({
+            key: 'talks',
+            data: talks_temp
+          })
+        })
+        .catch((err: any) => {
+          console.log(err)
+          this.setData({
+            btnDisable: false
+          })
+          wx.setNavigationBarTitle({
+            title: 'RPAITALK'
+          })
+        })
+    } else if (this.data.issue == '/clear') {
+      this.setData({
+        issue: '',
+        talks: []
+      })
+      wx.vibrateShort({
+        type: 'light'
+      })
+      wx.clearStorageSync()
+    } else {
+      wx.vibrateLong()
+      wx.showToast({
+        icon: 'error',
+        title: '内容为空'
+      })
+    }
   }
+
 })

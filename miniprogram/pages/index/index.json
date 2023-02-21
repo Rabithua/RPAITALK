@@ -1,3 +1,5 @@
 {
-  "usingComponents": {}
+  "usingComponents": {},
+  "navigationBarTitleText": "RPAITALK",
+  "navigationBarBackgroundColor": "#E8E8E8"
 }
