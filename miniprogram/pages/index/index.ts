@@ -8,7 +8,7 @@ Page({
     talks: [] as any,
     issue: '',
     btnDisable: false,
-    chatSroll:''
+    chatSroll: ''
   },
 
   onLoad() {
@@ -26,6 +26,14 @@ Page({
       // Do something when catch error
     }
   },
+
+  copy(e:any){
+    console.log(e.target.dataset.content)
+    wx.setClipboardData({
+      data: e.target.dataset.content
+    })
+  },
+
   input(e: any) {
     // console.log(e.detail.value)
     this.setData({
@@ -61,9 +69,10 @@ Page({
         .then((res: any) => {
           console.log(res.result)
           let talks_temp = this.data.talks
+          console.log(res.result.match(/\n\n(\S*)/)[1]);//结果fff
           talks_temp.push({
             who: 'openai',
-            content: res.result.trim('\n\n')
+            content: res.result.match(/\n\n(\S*)/)[1][0]
           })
           wx.setNavigationBarTitle({
             title: 'RPAITALK'
@@ -86,9 +95,16 @@ Page({
           this.setData({
             btnDisable: false
           })
-          wx.setNavigationBarTitle({
-            title: 'RPAITALK'
+          if (err.statusCode == 500) {
+            wx.setNavigationBarTitle({
+            title: '服务器繁忙🥵'
           })
+          } else {
+            wx.setNavigationBarTitle({
+              title: 'Something wrong🐞'
+            })
+          }
+          
         })
     } else if (this.data.issue == '/clear') {
       this.setData({

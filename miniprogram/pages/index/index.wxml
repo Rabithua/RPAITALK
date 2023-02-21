@@ -1,11 +1,11 @@
 <!--index.wxml-->
 <view class="container">
   <scroll-view scroll-y scroll-with-animation scroll-into-view="{{chatSroll}}" class="talks">
-    <view class="talk" data-type="{{ talk.who }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}">{{ talk.content }}</view>
+    <view class="talk" bindlongpress="copy" data-content="{{ talk.content }}" data-type="{{ talk.who }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}">{{ talk.content }}</view>
     <view style="width: 100%; height: 10rpx;"></view> 
   </scroll-view>
   <view class="footer">
-    <input value="{{issue}}" bindinput="input" type="text" />
+    <input bindconfirm="submit" cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
     <button type="primary" bindtap="submit" disabled="{{ btnDisable }}" size="mini">发送</button>
   </view>
 </view>
