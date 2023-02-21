@@ -24,6 +24,13 @@
       word-break: break-all;
       white-space: pre-line;
       border: 1rpx solid #00000010;
+      opacity: 0;
+      animation: show forwards 300ms;
+      .issueFix {
+        color: #07c160;
+        animation: show forwards 500ms 300ms;
+        opacity: 0;
+      }
     }
 
     .talk[data-type=openai] {
@@ -65,5 +72,15 @@
       flex-shrink: 0;
       margin-right: 40rpx;
     }
+  }
+}
+
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

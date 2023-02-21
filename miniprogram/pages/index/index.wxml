@@ -1,7 +1,7 @@
 <!--index.wxml-->
 <view class="container">
   <scroll-view scroll-y scroll-with-animation scroll-into-view="{{chatSroll}}" class="talks">
-    <view class="talk" bindlongpress="copy" data-content="{{ talk.content }}" data-type="{{ talk.who }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}">{{ talk.content }}</view>
+    <view class="talk" bindlongpress="copy" data-content="{{ talk.content }}" data-type="{{ talk.who }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}">{{ talk.content }}<text class="issueFix" bindtap="issueFixTip" wx:if="{{ talk.issueFix }}">{{ talk.issueFix }}</text></view>
     <view style="width: 100%; height: 10rpx;"></view> 
   </scroll-view>
   <view class="footer">

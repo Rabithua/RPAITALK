@@ -27,7 +27,7 @@ Page({
     }
   },
 
-  copy(e:any){
+  copy(e: any) {
     console.log(e.target.dataset.content)
     wx.setClipboardData({
       data: e.target.dataset.content
@@ -69,10 +69,12 @@ Page({
         .then((res: any) => {
           console.log(res.result)
           let talks_temp = this.data.talks
-          console.log(res.result.match(/\n\n(\S*)/)[1]);//结果fff
+          console.log(res.result.match(/\n\n([\s\S]*)/)[1], typeof (res.result.match(/\n\n([\s\S]*)/)[1]));//结果fff
+          console.log(res.result.match(/([\s\S]*)\n\n[\s\S]/)[1], typeof (res.result.match(/([\s\S]*)\n\n[\s\S]/)[1]))
+          talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
           talks_temp.push({
             who: 'openai',
-            content: res.result.match(/\n\n(\S*)/)[1][0]
+            content: res.result.match(/\n\n(\S*)/)[1]
           })
           wx.setNavigationBarTitle({
             title: 'RPAITALK'
@@ -97,14 +99,14 @@ Page({
           })
           if (err.statusCode == 500) {
             wx.setNavigationBarTitle({
-            title: '服务器繁忙🥵'
-          })
+              title: '服务器繁忙🥵'
+            })
           } else {
             wx.setNavigationBarTitle({
               title: 'Something wrong🐞'
             })
           }
-          
+
         })
     } else if (this.data.issue == '/clear') {
       this.setData({
@@ -122,6 +124,16 @@ Page({
         title: '内容为空'
       })
     }
+  },
+
+  issueFixTip(){
+    wx.vibrateShort({
+      type: 'light'
+    })
+    wx.showToast({
+      icon: 'none',
+      title: '问题由openai自动补充'
+    })
   }
 
 })
