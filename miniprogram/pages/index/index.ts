@@ -74,7 +74,7 @@ Page({
           talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
           talks_temp.push({
             who: 'openai',
-            content: res.result.match(/\n\n(\S*)/)[1]
+            content: res.result.match(/\n\n([\s\S]*)/)[1]
           })
           wx.setNavigationBarTitle({
             title: 'RPAITALK'
