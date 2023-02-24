@@ -41,6 +41,18 @@ Page({
     })
   },
 
+  issueWithContext() {
+    let talks = this.data.talks.slice(-3)
+    let newTalks = []
+    for (let i = 0; i < talks.length; i++) {
+      if (talks[i].who == 'user') {
+        newTalks.push('human:' + talks[i].content + (talks[i].issueFix ? talks[i].issueFix : ''))
+      } else {
+        newTalks.push('ai:' + talks[i].content)
+      }
+    }
+    return newTalks.join('/n ') + '/n ai:'
+  },
   submit() {
     if (this.data.issue && this.data.issue !== '/clear') {
       let talks_temp = this.data.talks
@@ -62,23 +74,24 @@ Page({
       wx.vibrateShort({
         type: 'light'
       })
-      wx.setNavigationBarTitle({
-        title: '思考中...'
-      })
-      getAnswer(issue, app.globalData.url)
+      console.log(this.issueWithContext())
+      getAnswer(this.issueWithContext(), app.globalData.url)
         .then((res: any) => {
           console.log(res.result)
           let talks_temp = this.data.talks
-          console.log(res.result.match(/\n\n([\s\S]*)/)[1], typeof (res.result.match(/\n\n([\s\S]*)/)[1]));//结果fff
-          console.log(res.result.match(/([\s\S]*)\n\n[\s\S]/)[1], typeof (res.result.match(/([\s\S]*)\n\n[\s\S]/)[1]))
-          talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
+          console.log(res.result.match(/\n\n([\s\S]*)/), typeof (res.result.match(/\n\n([\s\S]*)/)));
+          console.log(res.result.match(/([\s\S]*)\n\n[\s\S]/), typeof (res.result.match(/([\s\S]*)\n\n[\s\S]/)))
+          if (res.result.match(/(.*?)\n\n/)) {
+            talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
+          }
           talks_temp.push({
             who: 'openai',
-            content: res.result.match(/\n\n([\s\S]*)/)[1]
+            content: res.result.match(/\n\n([\s\S]*)/) ? res.result.match(/\n\n([\s\S]*)/)[1] : res.result
           })
           wx.setNavigationBarTitle({
             title: 'RPAITALK'
           })
+          wx.hideNavigationBarLoading()
           this.setData({
             talks: talks_temp,
             chatSroll: 'chat' + (talks_temp.length - 1),
@@ -91,8 +104,10 @@ Page({
             key: 'talks',
             data: talks_temp
           })
+
         })
         .catch((err: any) => {
+          wx.hideNavigationBarLoading()
           console.log(err)
           this.setData({
             btnDisable: false
@@ -106,7 +121,6 @@ Page({
               title: 'Something wrong🐞'
             })
           }
-
         })
     } else if (this.data.issue == '/clear') {
       this.setData({
@@ -126,7 +140,7 @@ Page({
     }
   },
 
-  issueFixTip(){
+  issueFixTip() {
     wx.vibrateShort({
       type: 'light'
     })
