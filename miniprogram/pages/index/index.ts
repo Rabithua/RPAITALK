@@ -28,9 +28,9 @@ Page({
   },
 
   copy(e: any) {
-    console.log(e.target.dataset.content)
+    console.log(e.currentTarget.dataset.content)
     wx.setClipboardData({
-      data: e.target.dataset.content
+      data: e.currentTarget.dataset.content
     })
   },
 
@@ -41,6 +41,7 @@ Page({
     })
   },
 
+  // 旧版openai模型上下文方法
   issueWithContext() {
     let talks = this.data.talks.slice(-3)
     let newTalks = []
@@ -53,12 +54,33 @@ Page({
     }
     return newTalks.join('/n ') + '/n ai:'
   },
+
   submit() {
-    if (this.data.issue && this.data.issue !== '/clear') {
+    if (this.data.issue == '/clear') {
+      this.setData({
+        issue: '',
+        talks: []
+      })
+      wx.vibrateShort({
+        type: 'light'
+      })
+      wx.clearStorageSync()
+    } else if (this.data.issue == '/help') {
+      wx.vibrateShort()
+      this.setData({
+        chatSroll: 'help',
+        issue: ''
+      })
+    } else if (this.data.issue == '') {
+      wx.vibrateLong()
+      wx.showToast({
+        icon: 'error',
+        title: '内容为空'
+      })
+    } else {
       let talks_temp = this.data.talks
-      let issue = this.data.issue
       talks_temp.push({
-        who: 'user',
+        role: 'user',
         content: this.data.issue
       })
       this.setData({
@@ -85,7 +107,7 @@ Page({
             talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
           }
           talks_temp.push({
-            who: 'openai',
+            role: 'assistant',
             content: res.result.match(/\n\n([\s\S]*)/) ? res.result.match(/\n\n([\s\S]*)/)[1] : res.result
           })
           wx.setNavigationBarTitle({
@@ -104,7 +126,6 @@ Page({
             key: 'talks',
             data: talks_temp
           })
-
         })
         .catch((err: any) => {
           wx.hideNavigationBarLoading()
@@ -122,21 +143,6 @@ Page({
             })
           }
         })
-    } else if (this.data.issue == '/clear') {
-      this.setData({
-        issue: '',
-        talks: []
-      })
-      wx.vibrateShort({
-        type: 'light'
-      })
-      wx.clearStorageSync()
-    } else {
-      wx.vibrateLong()
-      wx.showToast({
-        icon: 'error',
-        title: '内容为空'
-      })
     }
   },
 

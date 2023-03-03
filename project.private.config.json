@@ -3,6 +3,6 @@
   "projectname": "RPAITALK",
   "setting": {
     "compileHotReLoad": true,
-    "urlCheck": true
+    "urlCheck": false
   }
 }

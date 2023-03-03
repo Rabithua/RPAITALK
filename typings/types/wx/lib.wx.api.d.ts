@@ -8997,7 +8997,7 @@ wx.getSetting({
         /** 需要基础库： `2.13.0`
          *
          * 震动强度类型，有效值为：heavy、medium、light */
-        type: string
+        type?: string
         /** 接口调用结束的回调函数（调用成功、失败都会执行） */
         complete?: VibrateShortCompleteCallback
         /** 接口调用失败的回调函数 */
@@ -26438,7 +26438,7 @@ wx.updateShareMenu({
          *
          * 使手机发生较短时间的振动（15 ms）。仅在 iPhone `7 / 7 Plus` 以上及 Android 机型生效 */
         vibrateShort<T extends VibrateShortOption = VibrateShortOption>(
-            option: T
+            option?: T
         ): PromisifySuccessResult<T, VibrateShortOption>
         /** [wx.writeBLECharacteristicValue(Object object)](https://developers.weixin.qq.com/miniprogram/dev/api/device/bluetooth-ble/wx.writeBLECharacteristicValue.html)
 *
