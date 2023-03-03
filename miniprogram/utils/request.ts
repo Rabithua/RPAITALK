@@ -1,7 +1,7 @@
 export const getAnswer = (content: string, url: string) => {
   return new Promise((resolve, reject) => {
     wx.request({
-      url: url + '/openai',
+      url: url + '/chatgpt',
       method: "POST",
       data: JSON.stringify({
         "content": content

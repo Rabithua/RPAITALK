@@ -12,15 +12,18 @@
         <view> /clear - 清除对话 </view>
         <view> /help - 查看使用帮助 </view>
         <view style="margin-top: 30rpx;"> 支持三句对话上下文（包含ai和人类） </view>
+        <view style="color: #07c160;">当前模型为 chatgpt 同款（gpt-3.5-turbo）✨</view>
 
       </view>
     </view>
-    <view class="talk" bindlongpress="copy" data-content="{{ talk.content }}" data-type="{{ talk.role }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}"><div style="white-space: pre-line;">{{ talk.content }}</div><text class="issueFix" bindtap="issueFixTip" wx:if="{{ talk.issueFix }}">{{ talk.issueFix }}</text></view>
+    <view class="talk" bindlongpress="copy" data-content="{{ talk.content }}" data-type="{{ talk.role }}" wx:for="{{talks}}" wx:for-index="idx" wx:key="idx" wx:for-item="talk" id="{{'chat' + idx}}">
+      <div style="white-space: pre-line;">{{ talk.content }}</div>
+    </view>
     <view wx:if="{{ btnDisable }}" class="talk shine" data-type="assistant">思考中...</view>
     <view style="width: 100%; height: 10rpx;"></view>
   </scroll-view>
   <view class="footer">
-    <input bindconfirm="submit" cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
+    <textarea auto-height disable-default-padding	 bindconfirm="submit" show-confirm-bar="{{false}}" cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
     <button type="primary" bindtap="submit" disabled="{{ btnDisable }}" size="mini">发送</button>
   </view>
 </view>

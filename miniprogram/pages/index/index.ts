@@ -41,118 +41,103 @@ Page({
     })
   },
 
-  // 旧版openai模型上下文方法
-  issueWithContext() {
-    let talks = this.data.talks.slice(-3)
-    let newTalks = []
-    for (let i = 0; i < talks.length; i++) {
-      if (talks[i].who == 'user') {
-        newTalks.push('human:' + talks[i].content + (talks[i].issueFix ? talks[i].issueFix : ''))
-      } else {
-        newTalks.push('ai:' + talks[i].content)
-      }
-    }
-    return newTalks.join('/n ') + '/n ai:'
-  },
-
   submit() {
-    if (this.data.issue == '/clear') {
-      this.setData({
-        issue: '',
-        talks: []
-      })
-      wx.vibrateShort({
-        type: 'light'
-      })
-      wx.clearStorageSync()
-    } else if (this.data.issue == '/help') {
-      wx.vibrateShort()
-      this.setData({
-        chatSroll: 'help',
-        issue: ''
-      })
-    } else if (this.data.issue == '') {
-      wx.vibrateLong()
-      wx.showToast({
-        icon: 'error',
-        title: '内容为空'
-      })
-    } else {
-      let talks_temp = this.data.talks
-      talks_temp.push({
-        role: 'user',
-        content: this.data.issue
-      })
-      this.setData({
-        btnDisable: true,
-        issue: '',
-        talks: talks_temp,
-        chatSroll: 'chat' + (talks_temp.length - 1),
-      })
-      wx.setStorage({
-        key: 'talks',
-        data: talks_temp
-      })
-      wx.vibrateShort({
-        type: 'light'
-      })
-      console.log(this.issueWithContext())
-      getAnswer(this.issueWithContext(), app.globalData.url)
-        .then((res: any) => {
-          console.log(res.result)
-          let talks_temp = this.data.talks
-          console.log(res.result.match(/\n\n([\s\S]*)/), typeof (res.result.match(/\n\n([\s\S]*)/)));
-          console.log(res.result.match(/([\s\S]*)\n\n[\s\S]/), typeof (res.result.match(/([\s\S]*)\n\n[\s\S]/)))
-          if (res.result.match(/(.*?)\n\n/)) {
-            talks_temp[talks_temp.length - 1].issueFix = res.result.match(/(.*?)\n\n/)[1]
-          }
-          talks_temp.push({
-            role: 'assistant',
-            content: res.result.match(/\n\n([\s\S]*)/) ? res.result.match(/\n\n([\s\S]*)/)[1] : res.result
-          })
-          wx.setNavigationBarTitle({
-            title: 'RPAITALK'
-          })
-          wx.hideNavigationBarLoading()
-          this.setData({
-            talks: talks_temp,
-            chatSroll: 'chat' + (talks_temp.length - 1),
-            btnDisable: false
-          })
-          wx.vibrateShort({
-            type: 'light'
-          })
-          wx.setStorage({
-            key: 'talks',
-            data: talks_temp
-          })
+    switch (this.data.issue) {
+      case '/clear':
+        this.setData({
+          issue: '',
+          talks: []
         })
-        .catch((err: any) => {
-          wx.hideNavigationBarLoading()
-          console.log(err)
-          this.setData({
-            btnDisable: false
-          })
-          if (err.statusCode == 500) {
-            wx.setNavigationBarTitle({
-              title: '服务器繁忙🥵'
-            })
-          } else {
-            wx.setNavigationBarTitle({
-              title: 'Something wrong🐞'
-            })
-          }
+        wx.vibrateShort({
+          type: 'light'
         })
+        wx.clearStorageSync()
+
+        break;
+      case '/help':
+        wx.vibrateShort()
+        this.setData({
+          chatSroll: 'help',
+          issue: ''
+        })
+        break
+      case '':
+        wx.vibrateLong()
+        wx.showToast({
+          icon: 'error',
+          title: '内容为空'
+        })
+        break
+      default:
+        let talks_temp = this.data.talks
+        talks_temp.push({
+          role: 'user',
+          content: this.data.issue
+        })
+        this.setData({
+          btnDisable: true,
+          issue: '',
+          talks: talks_temp,
+          chatSroll: 'chat' + (talks_temp.length - 1),
+        })
+        wx.setStorage({
+          key: 'talks',
+          data: talks_temp
+        })
+        wx.vibrateShort({
+          type: 'light'
+        })
+        console.log(this.data.talks.slice(-3))
+        getAnswer(this.data.talks.slice(-3), app.globalData.url)
+          .then((res: any) => {
+            console.log(res)
+            let talks_temp = this.data.talks
+            talks_temp.push(res)
+            wx.setNavigationBarTitle({
+              title: 'RPAITALK'
+            })
+            wx.hideNavigationBarLoading()
+            this.setData({
+              talks: talks_temp,
+              chatSroll: 'chat' + (talks_temp.length - 1),
+              btnDisable: false
+            })
+            this.removeDoubleNewLine()
+            wx.vibrateShort({
+              type: 'light'
+            })
+            wx.setStorage({
+              key: 'talks',
+              data: talks_temp
+            })
+          })
+          .catch((err: any) => {
+            wx.hideNavigationBarLoading()
+            console.log(err)
+            this.setData({
+              btnDisable: false
+            })
+            if (err.statusCode == 500) {
+              wx.setNavigationBarTitle({
+                title: '服务器繁忙🥵'
+              })
+            } else {
+              wx.setNavigationBarTitle({
+                title: 'Something wrong🐞'
+              })
+            }
+          })
+        break;
     }
   },
 
-  issueFixTip() {
-    wx.vibrateShort({
-      type: 'light'
+  removeDoubleNewLine() {
+    let talks_temp = this.data.talks
+    talks_temp.map((talk: any, index: any) => {
+      talks_temp[index].content = talk.content.replace(/^\n\n/, '')
     })
-    wx.showToast({
-      icon: 'none',
-      title: '问题由openai自动补充'
+    this.setData({
+      talks: talks_temp
     })
   }
 
