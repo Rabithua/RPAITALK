@@ -1,0 +1,22 @@
+@media (prefers-color-scheme: dark) {
+  page {
+    background-color: #343434 !important;
+  }
+
+  .setting {
+    background-color: #282828 !important;
+  }
+
+  .content {
+    color: #ffffff50!important;
+  }
+
+  .tokenDialogMask .tokenDialog {
+    background-color: #343434!important;
+  }
+
+  .desc {
+    color: #ffffff50!important;
+  }
+
+}

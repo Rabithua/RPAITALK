@@ -1,15 +1,19 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/home/index",
+    "pages/index/index",
+    "pages/settings/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "backgroundColor": "#ededed",
-    "backgroundColorContent": "#ededed",
-    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "@navBgColor",
+    "backgroundColorContent": "@navBgColor",
+    "navigationBarBackgroundColor": "@navBgColor",
     "navigationBarTitleText": "",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "@navTxtStyle"
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "themeLocation": "theme.json",
+  "darkmode": true
 }

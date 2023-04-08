@@ -1,0 +1,36 @@
+<!--pages/home/index.wxml-->
+<view class="container">
+  <!-- <image class="bg" mode="aspectFill" src="../../assets/noise.png" mode="" /> -->
+  <image src="../../assets/logo.svg" class="logo" mode="aspectFill"/>
+  <view class="modes">
+    <view wx:for="{{modes}}" wx:for-item="mode" wx:key="modes" wx:for-index="idx" class="mode" style="animation-duration: {{mode.delay}}ms;" bindtap="goChat" data-index="{{idx}}">
+      <image class="bg" style="opacity: 0.2; filter: contrast(200%);" mode="aspectFill" src="../../assets/noise.png" mode="" />
+      <view class="title">{{mode.title}}</view>
+      <view class="desc">
+        {{mode.desc}}
+      </view>
+      <view wx:if="{{mode.lock || mode.context && !token}}" class="mask">
+        <view class="lockIcon">
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="configs">
+    <view class="config" bindtap="goSettings">
+      <view class="name">
+        设置
+      </view>
+    </view>
+    <button open-type="feedback" style=" border-radius: 0;" class="config">
+      <view class="name">
+        提议
+      </view>
+    </button>
+    <view class="config" bindtap="goOthers">
+      <view class="name">
+        其他
+      </view>
+    </view>
+  </view>
+
+</view>

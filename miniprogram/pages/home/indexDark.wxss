@@ -1,0 +1,23 @@
+@media (prefers-color-scheme: dark) {
+  .mode {
+    color: #ccff00!important;
+    background-color: #0d0d0d!important;
+  }
+
+  .mode:nth-child(4n-1) {
+    background-color: #000000!important;
+  }
+
+  .mode:nth-child(4n-2) {
+    background-color: #000000!important;
+  }
+
+
+  .config {
+    background-color: #343434!important;
+  }
+
+  .name {
+    color: #ccff00!important;
+  }
+}

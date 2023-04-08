@@ -1,13 +1,40 @@
-/**app.wxss**/
-// .container {
-//   height: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: space-between;
-//   padding: 200rpx 0;
-//   box-sizing: border-box;
-// } 
 page {
-  background: #ededed;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
+}
+
+@keyframes scaleShow {
+  from {
+    transform: scale(0.9);
+    box-shadow: inset 0 0 20rpx #00000050;
+  }
+
+  to {
+    transform: scale(1);
+    box-shadow: inset 0 0 0rpx #00000050;
+  }
+}
+
+
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

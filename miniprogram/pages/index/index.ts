@@ -1,5 +1,6 @@
 // index.ts
 // 获取应用实例
+//@ts-ignore
 const app = getApp<IAppOption>()
 const { getAnswer } = require('../../utils/request')
 
@@ -8,30 +9,70 @@ Page({
     talks: [] as any,
     issue: '',
     btnDisable: false,
-    chatSroll: ''
+    chatSroll: '',
+    token: app.globalData.defaultToken,
+    defaultToken: app.globalData.defaultToken,
+    name: '助理小芳',
+    id: '',
+    context: false,
+    prompt: ''
   },
 
   onLoad() {
-    // @ts-ignore
+    let that = this
+    const eventChannel = this.getOpenerEventChannel()
+    // 监听acceptDataFromOpenerPage事件，获取上一页面通过eventChannel传送到当前页面的数据
+    eventChannel.on('sendData', function (data) {
+      console.log(data.data)
+      let d = data.data
+      wx.setNavigationBarTitle(d.title)
+      that.setData({
+        chatSroll: 'chat' + 0,
+        name: d.title,
+        id: d.id,
+        prompt: d.prompt,
+        context: d.context
+      })
+      wx.setNavigationBarTitle({
+        title: that.data.name
+      })
+      
+      try {
+        var talks = wx.getStorageSync(that.data.id)
+        if (talks) {
+          // Do something with return value
+          that.setData({
+            talks: that.fomatContent(talks),
+            chatSroll: 'chat' + (talks.length - 1)
+          })
+          that.removeDoubleNewLine()
+        } else {
+          that.setData({
+            talks: [
+              {
+                role: 'system',
+                fomatContent: that.data.prompt,
+                content: that.data.prompt,
+              }
+            ],
+          })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    })
+
     try {
-      var talks = wx.getStorageSync('talks')
-      if (talks) {
-        // Do something with return value
+      var token = wx.getStorageSync('token')
+      if (token) {
         this.setData({
-          talks,
-          chatSroll: 'chat' + (talks.length - 1)
+          token: token
         })
       }
     } catch (e) {
       // Do something when catch error
     }
-  },
 
-  copy(e: any) {
-    console.log(e.currentTarget.dataset.content)
-    wx.setClipboardData({
-      data: e.currentTarget.dataset.content
-    })
   },
 
   input(e: any) {
@@ -42,16 +83,22 @@ Page({
   },
 
   submit() {
+    let that = this
     switch (this.data.issue) {
       case '/clear':
         this.setData({
           issue: '',
-          talks: []
+          talks: [
+            {
+              role: 'system',
+              content: that.data.prompt
+            }
+          ]
         })
         wx.vibrateShort({
           type: 'light'
         })
-        wx.clearStorageSync()
+        wx.removeStorageSync(that.data.id)
 
         break;
       case '/help':
@@ -81,24 +128,51 @@ Page({
           chatSroll: 'chat' + (talks_temp.length - 1),
         })
         wx.setStorage({
-          key: 'talks',
+          key: that.data.id,
           data: talks_temp
         })
         wx.vibrateShort({
           type: 'light'
         })
-        console.log(this.data.talks.slice(-3))
-        getAnswer(this.data.talks.slice(-3), app.globalData.url)
+        console.log(this.data.talks.slice(-5), talks_temp[talks_temp.length - 1])
+        let data = []
+        if (that.data.context) {
+          if (this.data.talks.length > 5) {
+            data = [
+              {
+                role: 'system',
+                content: that.data.prompt
+              },
+              ...this.data.talks.slice(-5)
+            ]
+          } else {
+            data = this.data.talks.slice(-5)
+          }
+
+        } else {
+          data = [
+            {
+              role: 'system',
+              content: that.data.prompt
+            },
+            {
+              role: 'user',
+              content: talks_temp[talks_temp.length - 1].content
+            }
+          ]
+        }
+        // @ts-ignore
+        getAnswer(data.map(({ fomatContent, ...rest }) => rest), app.globalData.url, this.data.token)
           .then((res: any) => {
             console.log(res)
             let talks_temp = this.data.talks
-            talks_temp.push(res)
+            talks_temp.push(res.choices[0].message)
             wx.setNavigationBarTitle({
-              title: 'RPAITALK'
+              title: that.data.name
             })
             wx.hideNavigationBarLoading()
             this.setData({
-              talks: talks_temp,
+              talks: this.fomatContent(talks_temp),
               chatSroll: 'chat' + (talks_temp.length - 1),
               btnDisable: false
             })
@@ -107,8 +181,8 @@ Page({
               type: 'light'
             })
             wx.setStorage({
-              key: 'talks',
-              data: talks_temp
+              key: that.data.id,
+              data: this.data.talks
             })
           })
           .catch((err: any) => {
@@ -117,13 +191,46 @@ Page({
             this.setData({
               btnDisable: false
             })
-            if (err.statusCode == 500) {
-              wx.setNavigationBarTitle({
-                title: '服务器繁忙🥵'
+            wx.vibrateLong()
+            try {
+              if (err.statusCode == 500 || err.statusCode == 502) {
+                that.setData({
+                  talks: [...that.data.talks, {
+                    content: '焯，代理好像挂了🤬，可以联系<span style="color: #ffca27">rabithua</span>修复。',
+                    fomatContent: '焯，代理好像挂了🤬，可以联系<span style="color: #ffca27">rabithua</span>修复。',
+                    role: 'assistant'
+                  }],
+                  chatSroll: 'chat' + (that.data.talks.length)
+                })
+                wx.setNavigationBarTitle({
+                  title: `${that.data.name}[已掉线]`
+                })
+              } else if (err.data.error !== undefined) {
+                if (err.data.error.code == "invalid_api_key") {
+                  wx.showModal({
+                    title: 'token无效',
+                    content: 'token无效或已过期，点击确定设置页面设置',
+                    success(res) {
+                      if (res.confirm) {
+                        wx.redirectTo({
+                          url: '../settings/index'
+                        })
+                      }
+                    }
+                  })
+                }
+              }
+            } catch (error) {
+              that.setData({
+                talks: [...that.data.talks, {
+                  content: `出了点意料之外的问题🥵，可以再次尝试，联系<span style="color: #ffca27">rabithua</span>修复。`,
+                  fomatContent: '出了点意料之外的问题🥵，可以再次尝试，联系<span style=\"color: #ffca27\">rabithua</span>修复。',
+                  role: 'assistant'
+                }],
+                chatSroll: 'chat' + (that.data.talks.length)
               })
-            } else {
               wx.setNavigationBarTitle({
-                title: 'Something wrong🐞'
+                title: `${that.data.name}[已掉线]`
               })
             }
           })
@@ -131,10 +238,21 @@ Page({
     }
   },
 
+  fomatContent(talks: any[]) {
+    const CODE_BLOCK_REG = /```[\s\S]*?\n([\s\S]*?)\n```/g;
+    talks.map((talk: any, index: any) => {
+      if (!talk.fomatContent) {
+        talks[index].fomatContent = talk.content.replace(CODE_BLOCK_REG, "<pre class='code' lang=''>$1</pre>")
+      }
+    })
+    return talks
+  },
+
   removeDoubleNewLine() {
     let talks_temp = this.data.talks
     talks_temp.map((talk: any, index: any) => {
       talks_temp[index].content = talk.content.replace(/^\n\n/, '')
+      talks_temp[index].fomatContent = talk.fomatContent.replace(/^\n\n/, '')
     })
     this.setData({
       talks: talks_temp

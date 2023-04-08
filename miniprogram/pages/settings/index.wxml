@@ -1,0 +1,31 @@
+<!--pages/settings/index.wxml-->
+<view class="setting" bindtap="setShowTokenDialog">
+  <view class="title">
+    token
+  </view>
+  <view class="content">{{token ? token : "默认值"}}</view>
+</view>
+
+<view class="setting" bindtap="resettoken">
+  <view class="title" style="color: #1ab756;">
+    重置token
+  </view>
+</view>
+
+<view wx:if="{{showTokenDialog}}" class="tokenDialogMask" catchtap="setShowTokenDialog">
+  <view class="tokenDialog" catchtap="none">
+    <view class="title">
+      输入你的TOKEN🔑
+    </view>
+    <view class="desc">
+      类似 sk-PV8jrEVokLu4jfzaq0XRT3BlbdFJLHkWtDprrblumaHJkuOf
+    </view>
+
+    <view class="flex">
+      <input focus="{{showTokenDialog}}" model:value="{{inputToken}}" type="text" />
+      <view class="btn" bindtap="setToken">
+        确定
+      </view>
+    </view>
+  </view>
+</view>

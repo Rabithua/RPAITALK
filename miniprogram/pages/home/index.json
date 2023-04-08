@@ -1,5 +1,6 @@
 {
   "usingComponents": {},
+  "navigationBarTitleText": "RPAITALK",
   "navigationBarBackgroundColor": "@navBgColor",
   "navigationBarTextStyle": "@navTxtStyle",
   "backgroundColor": "@navBgColor"
