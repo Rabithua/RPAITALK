@@ -1,0 +1,5 @@
+{
+  "navigationBarBackgroundColor": "@navBgColor",
+  "navigationBarTextStyle": "@navTxtStyle",
+  "backgroundColor": "@navBgColor"
+}

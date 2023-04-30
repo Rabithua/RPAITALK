@@ -5,6 +5,9 @@
   <view class="modes">
     <view wx:for="{{modes}}" wx:for-item="mode" wx:key="modes" wx:for-index="idx" class="mode" style="animation-duration: {{mode.delay}}ms;" bindtap="goChat" data-index="{{idx}}">
       <image class="bg" style="opacity: 0.2; filter: contrast(200%);" mode="aspectFill" src="../../assets/noise.png" mode="" />
+      <view wx:if="{{mode.context}}" class="jiyi">
+        记忆
+      </view>
       <view class="title">{{mode.title}}</view>
       <view class="desc">
         {{mode.desc}}

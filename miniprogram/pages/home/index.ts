@@ -88,9 +88,8 @@ Page({
     wx.vibrateShort({
       type: 'medium'
     })
-    wx.showToast({
-      icon: 'none',
-      title: '施工中...'
+    wx.navigateTo({
+      url: '../others/index'
     })
   },
 
@@ -107,7 +106,7 @@ Page({
       wx.vibrateLong()
       wx.showToast({
         icon: 'none',
-        title: '使用模块需要自定义token'
+        title: '使用包含上下文的模块需要自定义token'
       })
     } else {
       wx.vibrateShort({

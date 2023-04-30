@@ -4,7 +4,7 @@
     "navTxtStyle": "black"
   },
   "dark": {
-    "navBgColor": "#343434",
+    "navBgColor": "#282828",
     "navTxtStyle": "white"
   }
 }

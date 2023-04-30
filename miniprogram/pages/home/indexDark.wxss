@@ -14,7 +14,7 @@
 
 
   .config {
-    background-color: #343434!important;
+    background-color: #282828!important;
   }
 
   .name {

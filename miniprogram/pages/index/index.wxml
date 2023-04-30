@@ -22,7 +22,7 @@
     <view style="width: 100%; height: 10rpx;"></view>
   </scroll-view>
   <view class="footer">
-    <input bindconfirm="submit" auto-focus hold-keyboard cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
+    <input bindconfirm="submit" maxlength="500" auto-focus hold-keyboard cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
     <button type="primary" bindtap="submit" disabled="{{ btnDisable }}" size="mini">发送</button>
   </view>
 </view>

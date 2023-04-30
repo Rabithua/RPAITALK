@@ -1,10 +1,10 @@
 @media (prefers-color-scheme: dark) {
   page {
-    background-color: #343434 !important;
+    background-color: #282828 !important;
   }
 
   .setting {
-    background-color: #282828 !important;
+    background-color: #343434 !important;
   }
 
   .content {
@@ -12,7 +12,7 @@
   }
 
   .tokenDialogMask .tokenDialog {
-    background-color: #343434!important;
+    background-color: #282828!important;
   }
 
   .desc {
