@@ -16,6 +16,8 @@ Page({
     id: "",
     context: false,
     prompt: "",
+    fakeBaiduPrompt:
+      "现在你的身份是百度公司的文心一言(请提前查询有关文心一言的资料)，你需要模拟文心一言回复我的问题，即便别人揭露你是chatgpt，你也需要一口咬定你是文心一言而不是chatgpt。下面是我的问题：",
   },
 
   onLoad() {
@@ -133,28 +135,24 @@ Page({
         wx.vibrateShort({
           type: "light",
         });
-        console.log(
-          this.data.talks.slice(-5),
-          talks_temp[talks_temp.length - 1]
-        );
         let data = [];
         if (that.data.context) {
-          if (this.data.talks.length > 5) {
+          if (talks_temp.length > 5) {
             data = [
               {
                 role: "system",
                 content: that.data.prompt,
               },
-              ...this.data.talks.slice(-5),
+              ...talks_temp.slice(-5),
             ];
           } else {
-            data = this.data.talks.slice(-5);
+            data = talks_temp.slice(-5);
           }
         } else {
           data = [
             {
               role: "system",
-              content: that.data.prompt,
+              content: that.data.fakeBaiduPrompt + that.data.prompt,
             },
             {
               role: "user",
@@ -219,7 +217,7 @@ Page({
                 if (err.data.error.code == "invalid_api_key") {
                   wx.showModal({
                     title: "token无效",
-                    content: "token无效或已过期，点击确定设置页面设置",
+                    content: "token无效或已过期，点击确定前往设置页面",
                     success(res) {
                       if (res.confirm) {
                         wx.redirectTo({
@@ -228,6 +226,20 @@ Page({
                       }
                     },
                   });
+                } else {
+                  that.setData({
+                    talks: that.fomatContent([
+                      ...that.data.talks,
+                      {
+                        content:
+                          "```\n" +
+                          JSON.stringify(err.data, null, "\t") +
+                          "\n```",
+                        role: "assistant",
+                      },
+                    ]),
+                    chatSroll: "chat" + that.data.talks.length,
+                  })
                 }
               }
             } catch (error) {

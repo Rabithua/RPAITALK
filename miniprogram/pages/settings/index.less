@@ -20,18 +20,36 @@ page {
 }
 
 .setting {
-  margin: 20rpx 50rpx;
+  // margin: 20rpx 50rpx;
   background-color: #ffffff;
+  border-bottom: 1rpx solid #00000010;
   padding: 20rpx 30rpx;
-  border-radius: 15rpx;
   display: flex;
-  height: 70rpx;
+  min-height: 70rpx;
   line-height: 2;
   font-weight: 600;
+  align-items: center;
   .title {
+    font-size: 30rpx;
     font-weight: 600;
+    max-width: 350rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    .desc {
+      font-weight: normal;
+      color: #00000050;
+      font-size: 26rpx;
+      margin-top: -10rpx;
+      max-width: 350rpx;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
   .content {
+    font-weight: 300;
+    text-align: right;
     color: #00000060;
     margin-left: auto;
     max-width: 400rpx;
@@ -40,6 +58,9 @@ page {
     overflow: hidden;
     font-size: 35rpx;
     word-break: break-all;
+    picker {
+      min-width: 100rpx;
+    }
   }
 }
 

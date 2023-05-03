@@ -27,32 +27,54 @@
 //   })
 // }
 
+import { modelArray, presenceArray, temperatureArray } from "./options";
+
 export const getAnswer = (content: string, url: string, token: string) => {
   return new Promise((resolve, reject) => {
     wx.request({
-      url: url + '/v1/chat/completions',
+      url: url + "/v1/chat/completions",
       method: "POST",
       header: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
       data: JSON.stringify({
-        "model": "gpt-3.5-turbo",
-        "messages": content
+        model:
+          modelArray[
+            wx.getStorageSync("modelIndex")
+              ? wx.getStorageSync("modelIndex")
+              : 0
+          ],
+        temperature:
+          temperatureArray[
+            wx.getStorageSync("temperatureIndex")
+              ? wx.getStorageSync("temperatureIndex")
+              : 10
+          ],
+        max_tokens: wx.getStorageSync("maxTokens")
+          ? parseInt(wx.getStorageSync("maxTokens"))
+          : 2000,
+        presence_penalty:
+          presenceArray[
+            wx.getStorageSync("presenceIndex")
+              ? wx.getStorageSync("presenceIndex")
+              : 20
+          ],
+        messages: content,
       }),
       success(res) {
-        console.log(res)
+        console.log(res);
         if (res.statusCode == 200) {
-          resolve(res.data)
+          resolve(res.data);
         } else {
-          reject(res)
+          reject(res);
         }
       },
       fail(err) {
-        console.log(err)
-        reject(err)
-      }
-    })
-  })
-}
+        console.log(err);
+        reject(err);
+      },
+    });
+  });
+};

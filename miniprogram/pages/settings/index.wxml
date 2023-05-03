@@ -1,31 +1,69 @@
-<!--pages/settings/index.wxml-->
-<view class="setting" bindtap="setShowTokenDialog">
+<view class="setting" bindtap="focusToken">
   <view class="title">
     token
+    <view class="desc">
+      设置token解锁记忆模块
+    </view>
   </view>
-  <view class="content">{{token ? token : "默认值"}}</view>
+  <input model:value="{{token}}" focus="{{tokenFocus}}" class="content" type="text" placeholder="默认值" bindconfirm="setToken" bindblur="setToken" />
+</view>
+
+<view wx:if="{{env == 'release'}}" class="setting">
+  <view class="title">
+    模型（model）
+    <view class="desc">
+      对话模型，没有权限时会报错
+    </view>
+  </view>
+  <view class="content">
+    <picker bindchange="modelChange" value="{{modelIndex}}" range="{{modelArray}}">
+      {{modelArray[modelIndex]}}
+    </picker>
+  </view>
+</view>
+
+<view class="setting" >
+  <view class="title">
+    随机性（temperature）
+    <view class="desc">
+      大于1的值可能导致乱码
+    </view>
+  </view>
+  <view class="content">
+    <picker bindchange="temperatureChange" value="{{temperatureIndex}}" range="{{temperatureArray}}">
+      {{temperatureArray[temperatureIndex]}}
+    </picker>
+  </view>
+</view>
+
+<view class="setting">
+  <view class="title">
+    回复长度（max_tokens）
+    <view class="desc">
+      回答所用的最大token数
+    </view>
+  </view>
+  <view class="content">
+    <input type="number" model:value="{{maxTokens}}" class="content" type="text" placeholder="默认值" bindblur="maxTokensChange" bindconfirm="maxTokensChange" style="color: {{maxTokens > 4000 || maxTokens < 10 ? 'red' : ''}}" />
+  </view>
+</view>
+
+<view class="setting" >
+  <view class="title">
+    新鲜度（presence_penalty）
+    <view class="desc">
+      值越大越能拓展到新话题
+    </view>
+  </view>
+  <view class="content">
+    <picker bindchange="presenceChange" value="{{presenceIndex}}" range="{{presenceArray}}">
+      {{presenceArray[presenceIndex]}}
+    </picker>
+  </view>
 </view>
 
 <view class="setting" bindtap="resettoken">
   <view class="title" style="color: #1ab756;">
     重置token
-  </view>
-</view>
-
-<view wx:if="{{showTokenDialog}}" class="tokenDialogMask" catchtap="setShowTokenDialog">
-  <view class="tokenDialog" catchtap="none">
-    <view class="title">
-      输入你的TOKEN🔑
-    </view>
-    <view class="desc">
-      类似 sk-PV8jrEVokLu4jfzaq0XRT3BlbdFJLHkWtDprrblumaHJkuOf
-    </view>
-
-    <view class="flex">
-      <input focus="{{showTokenDialog}}" model:value="{{inputToken}}" type="text" />
-      <view class="btn" bindtap="setToken">
-        确定
-      </view>
-    </view>
   </view>
 </view>
