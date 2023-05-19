@@ -1,6 +1,6 @@
 <!--index.wxml-->
 <view class="container" style="{{ btnDisable ? 'border-color: #07c160' : ''}}">
-  <scroll-view scroll-y scroll-with-animation scroll-into-view="{{chatSroll}}" class="talks">
+  <scroll-view style="transform: translateY(-{{keyboardHeight - 20}}px)" scroll-y scroll-with-animation scroll-into-view="{{chatSroll}}" class="talks">
     <view class="help" id="help">
       <view class="helpHeader">
         <text class="helpTitle">TIPS</text>
@@ -21,8 +21,8 @@
     <view wx:if="{{ btnDisable }}" class="talk shine" data-type="assistant">思考中...</view>
     <view style="width: 100%; height: 10rpx;"></view>
   </scroll-view>
-  <view class="footer">
-    <input bindconfirm="submit" maxlength="500" auto-focus hold-keyboard cursor-spacing="20" value="{{issue}}" bindinput="input" type="text" />
+  <view class="footer" style="transform: translateY(-{{keyboardHeight - 20}}px)">
+    <input bindconfirm="submit" maxlength="500" auto-focus hold-keyboard adjust-position="{{false}}" cursor-spacing="20" value="{{issue}}" bindinput="input" bindfocus="keyboardUp" bindblur="keyboardDown" type="text" />
     <button type="primary" bindtap="submit" disabled="{{ btnDisable }}" size="mini">发送</button>
   </view>
 </view>

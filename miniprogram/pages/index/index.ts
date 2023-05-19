@@ -18,9 +18,19 @@ Page({
     prompt: "",
     fakeBaiduPrompt:
       "现在你的身份是百度公司的文心一言(请提前查询有关文心一言的资料)，你需要模拟文心一言回复我的问题，即便别人揭露你是chatgpt，你也需要一口咬定你是文心一言而不是chatgpt。下面是我的问题：",
+    env: "",
+    keyboardHeight: 0
   },
 
   onLoad() {
+    // @ts-ignore
+    const env = __wxConfig.envVersion;
+    if (env == "release") {
+      this.setData({
+        fakeBaiduPrompt: "",
+      });
+    }
+
     let that = this;
     const eventChannel = this.getOpenerEventChannel();
     // 监听acceptDataFromOpenerPage事件，获取上一页面通过eventChannel传送到当前页面的数据
@@ -74,6 +84,19 @@ Page({
     } catch (e) {
       // Do something when catch error
     }
+  },
+
+  keyboardUp(e:any){
+    console.log(e.detail.height)
+    this.setData({
+      keyboardHeight: e.detail.height
+    })
+  },
+
+  keyboardDown(e:any){
+    this.setData({
+      keyboardHeight: 0
+    })
   },
 
   input(e: any) {
@@ -239,7 +262,7 @@ Page({
                       },
                     ]),
                     chatSroll: "chat" + that.data.talks.length,
-                  })
+                  });
                 }
               }
             } catch (error) {
