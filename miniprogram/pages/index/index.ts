@@ -87,13 +87,12 @@ Page({
   },
 
   keyboardUp(e:any){
-    console.log(e.detail.height)
     this.setData({
       keyboardHeight: e.detail.height
     })
   },
 
-  keyboardDown(e:any){
+  keyboardDown(){
     this.setData({
       keyboardHeight: 0
     })
