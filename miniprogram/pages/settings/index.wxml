@@ -5,7 +5,7 @@
       设置token解锁记忆模块
     </view>
   </view>
-  <input model:value="{{token}}" focus="{{tokenFocus}}" class="content" type="text" placeholder="默认值" bindconfirm="setToken" bindblur="setToken" />
+  <input maxlength="2000" model:value="{{token}}" focus="{{tokenFocus}}" class="content" type="text" placeholder="默认值" bindconfirm="setToken" bindblur="setToken" />
 </view>
 
 <view wx:if="{{env == 'release'}}" class="setting">
@@ -16,13 +16,13 @@
     </view>
   </view>
   <view class="content">
-    <picker bindchange="modelChange" value="{{modelIndex}}" range="{{modelArray}}">
-      {{modelArray[modelIndex]}}
+    <picker bindchange="modelChange" value="{{modelIndex}}" range="{{modelArray}}" range-key="id">
+      {{modelArray[modelIndex].id}}
     </picker>
   </view>
 </view>
 
-<view class="setting" >
+<view class="setting">
   <view class="title">
     随机性（temperature）
     <view class="desc">
@@ -38,7 +38,7 @@
 
 <view class="setting">
   <view class="title">
-    回复长度（max_tokens）
+    回复长度（max_completion_tokens）
     <view class="desc">
       回答所用的最大token数
     </view>
@@ -48,7 +48,7 @@
   </view>
 </view>
 
-<view class="setting" >
+<view class="setting">
   <view class="title">
     新鲜度（presence_penalty）
     <view class="desc">

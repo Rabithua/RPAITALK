@@ -1,3 +1,5 @@
+import { Model } from "../state/main";
+
 let temperatureArray = [
   0,
   0.1,
@@ -66,14 +68,4 @@ let presenceArray = [
   2,
 ];
 
-let modelArray = [
-  "gpt-3.5-turbo",
-  "gpt-3.5-turbo-0301",
-  "gpt-3.5-turbo-0613",
-  "gpt-4",
-  "gpt-4-0314",
-  "gpt-4-32k",
-  "gpt-4-32k-0314",
-];
-
-export { modelArray, presenceArray, temperatureArray };
+export { presenceArray, temperatureArray };

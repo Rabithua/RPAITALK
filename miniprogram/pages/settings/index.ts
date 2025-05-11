@@ -1,18 +1,13 @@
 // pages/settings/index.ts
-// @ts-ignore
-const app = getApp<IAppOption>();
-import {
-  modelArray,
-  presenceArray,
-  temperatureArray,
-} from "../../utils/options";
+import { presenceArray, temperatureArray } from "../../utils/options";
 
 Page({
   data: {
     showTokenDialog: false,
     token: "",
     inputToken: "",
-    modelArray: modelArray,
+    modelArray: getApp().globalData.modelArray,
+    modelIndex: wx.getStorageSync("modelIndex") || 0,
     temperatureArray: temperatureArray,
     presenceArray: presenceArray,
   },
@@ -21,12 +16,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-    // @ts-ignore
-    const env = __wxConfig.envVersion; 
-    console.log(env)
     this.setData({
       token: wx.getStorageSync("token"),
-      env
+      env: getApp().globalData.env,
     });
   },
 

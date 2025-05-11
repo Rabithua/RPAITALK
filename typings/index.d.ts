@@ -1,10 +1,8 @@
 /// <reference path="./types/index.d.ts" />
 
+import { GlobalData } from "../miniprogram/state/main";
+
 interface IAppOption {
-  globalData: {
-    userInfo?: WechatMiniprogram.UserInfo,
-    url?: string,
-    defaultToken?: string
-  }
-  userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback,
+  globalData: GlobalData;
+  userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback;
 }
